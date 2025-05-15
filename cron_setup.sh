@@ -1,8 +1,7 @@
 #!/bin/bash
-# Adjust these variables to your actual script and directories
-BACKUP_SCRIPT="/full/path/to/backup_automation.sh"
-SOURCE_DIR="/full/path/to/source"
-DEST_DIR="/full/path/to/destination"
+BACKUP_SCRIPT="/mnt/c/Users/siya1/OneDrive/Desktop/ChronoUser_Backup_Automation/backup_automation.sh"
+SOURCE_DIR="/mnt/c/Users/siya1/Documents"
+DEST_DIR="/mnt/c/Users/siya1/OneDrive/Desktop/ChronoUser_Backup_Automation/Backup files"
 
 FREQUENCY="daily"
 
@@ -22,6 +21,7 @@ case $FREQUENCY in
         ;;
 esac
 
-(crontab -l 2>/dev/null | grep -v "$BACKUP_SCRIPT"; echo "$CRON_TIME $BACKUP_SCRIPT $SOURCE_DIR $DEST_DIR $FREQUENCY") | crontab -
+
+(crontab -l 2>/dev/null | grep -v "$BACKUP_SCRIPT"; echo "$CRON_TIME /bin/bash \"$BACKUP_SCRIPT\" \"$SOURCE_DIR\" \"$DEST_DIR\" \"$FREQUENCY\"") | crontab -
 
 echo "Cron job installed for $FREQUENCY backups."
