@@ -62,11 +62,14 @@ class BackupAutomationApp:
         btn_frame = tk.Frame(self.root, bg=BG_COLOR)
         btn_frame.pack(pady=(0, PAD_Y))
 
-        self.start_btn = tk.Button(btn_frame, text="Start Backup", font=FONT_BTN, bg="#28a745", fg="white", width=20, command=self.start_backup_thread)
-        self.start_btn.pack(side='left', padx=20)
+        self.start_btn = tk.Button(btn_frame, text="Start Backup", font=FONT_BTN, bg="#28a745", fg="white", width=10, command=self.start_backup_thread)
+        self.start_btn.pack(side='left', padx=10)
 
         self.log_btn = tk.Button(btn_frame, text="View Backup Logs", font=FONT_BTN, bg="#17a2b8", fg="white", width=20, command=self.show_logs)
         self.log_btn.pack(side='left', padx=20)
+
+        self.schedule_btn = tk.Button(btn_frame, text="Schedule Backup", font=FONT_BTN, bg="#1e0436", fg="white", width=20, command=self.schedule_backup)
+        self.schedule_btn.pack(side='left', padx=20)
 
         self.log_frame = tk.Frame(self.root, bg="#222", height=200)
         self.log_text = scrolledtext.ScrolledText(self.log_frame, height=12, bg="#111", fg="#efe", font=FONT_LOG)
@@ -154,8 +157,26 @@ class BackupAutomationApp:
         text_widget.pack(fill=tk.BOTH, expand=True)
         text_widget.insert(tk.END, content)
         text_widget.config(state=tk.DISABLED)
+        
+    def schedule_backup(self):
+        source = self.source_entry.get()
+        destination = self.dest_entry.get()
+        frequency = self.frequency_var.get()
+
+        if not source or not destination:
+            messagebox.showerror("Input Error", "Please select both source and destination folders.")
+            return
+
+        try:
+            cmd = ["bash", "cron_setup.sh", source, destination, frequency]
+            subprocess.run(cmd, check=True)
+            messagebox.showinfo("Scheduled", f"Backup scheduled as '{frequency}' via cron successfully.")
+        except subprocess.CalledProcessError as e:
+            messagebox.showerror("Scheduling Failed", f"An error occurred while scheduling backup:\n{e}")
+
 
 if __name__ == "__main__":
     root = tk.Tk()
     app = BackupAutomationApp(root)
     root.mainloop()
+    
