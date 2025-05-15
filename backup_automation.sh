@@ -3,7 +3,7 @@
 SOURCE_DIR="$1"
 DEST_DIR="$2"
 FREQUENCY="$3"
-COMPRESSION="${4:-none}"  
+COMPRESSION="${4:-none}"
 LOG_FILE="./logs/backup.log"
 
 TIMESTAMP=$(date '+%Y-%m-%d_%H-%M-%S')
@@ -17,7 +17,15 @@ log() {
 perform_backup() {
     log "Starting backup from $SOURCE_DIR to $DEST_DIR with compression: $COMPRESSION"
 
+    # Ensure destination exists
+    mkdir -p "$DEST_DIR"
+    if [ $? -ne 0 ]; then
+        log "Failed to create destination directory: $DEST_DIR"
+        exit 1
+    fi
+
     TMP_BACKUP_DIR="${DEST_DIR}/backup_tmp_${TIMESTAMP}"
+    mkdir -p "$TMP_BACKUP_DIR"
 
     # Sync source to temporary directory
     rsync -av --delete "$SOURCE_DIR"/ "$TMP_BACKUP_DIR"/ >> "$LOG_FILE" 2>&1
